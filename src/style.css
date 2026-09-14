@@ -5,6 +5,9 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease;
+  max-width: 280px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .movie-card:hover {
@@ -185,5 +188,94 @@
   .detail-title {
     font-size: 2rem;
     margin-top: 1.5rem;
+  }
+}
+
+.screenings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.screening-card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.screening-time {
+  display: flex;
+  flex-direction: column;
+}
+
+.s-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.s-hour {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.screening-info {
+  flex: 1;
+  margin-left: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.s-room {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.s-seats {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.screening-card .btn-primary {
+  margin-top: 0;
+  background: transparent;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  padding: 0.5rem 1.5rem;
+  min-width: 150px;
+}
+
+.screening-card .btn-primary:hover:not(:disabled) {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-disabled {
+  border: 1px solid #4a4a5a !important;
+  color: #a0a0a8 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .screening-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .screening-info {
+    margin-left: 0;
+  }
+  
+  .screening-card .btn-primary {
+    width: 100%;
   }
 }
