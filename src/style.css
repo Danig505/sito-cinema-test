@@ -79,3 +79,111 @@
   background-color: var(--card-bg);
   border-radius: 8px;
 }
+
+.back-link {
+  display: inline-block;
+  color: var(--primary-color);
+  text-decoration: none;
+  border: 1px solid var(--primary-color);
+  padding: 0.5rem 1.2rem;
+  border-radius: 25px;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.movie-detail-container {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+.detail-poster {
+  flex: 0 0 350px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(255, 74, 74, 0.15);
+}
+
+.detail-poster img {
+  width: 100%;
+  display: block;
+}
+
+.detail-info {
+  flex: 1;
+}
+
+.detail-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.detail-badges {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.4rem 1rem;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.badge-outline {
+  border: 1px solid #4a4a5a;
+  color: var(--text-muted);
+}
+
+.badge-primary {
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.detail-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-label {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-width: 80px;
+}
+
+.detail-value {
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .movie-detail-container {
+    flex-direction: column;
+  }
+  
+  .detail-poster {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .detail-title {
+    font-size: 2rem;
+    margin-top: 1.5rem;
+  }
+}
