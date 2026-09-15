@@ -27,6 +27,33 @@
       <div id="screenings-list" class="screenings-list"></div>
     </main>
 
+     <div id="booking-modal" class="modal-overlay hidden">
+       <div class="modal-content">
+         <div class="modal-header">
+           <div class="modal-icon">🎬</div>
+           <h2 class="modal-title">PRENOTA IL TUO POSTO</h2>
+           <p class="modal-subtitle">Compila il modulo per completare la prenotazione</p>
+         </div>
+         <form id="booking-form" class="booking-form">
+           <div class="form-group">
+             <label for="nome">NOME</label>
+             <input type="text" id="nome" placeholder="es. Mario" required>
+           </div>
+           <div class="form-group">
+             <label for="cognome">COGNOME</label>
+             <input type="text" id="cognome" placeholder="es. Rossi" required>
+           </div>
+           <div class="form-group">
+             <label for="email">EMAIL</label>
+             <input type="email" id="email" placeholder="es. mario.rossi@email.com" required>
+           </div>
+           <button type="submit" class="btn-primary form-submit">Conferma prenotazione</button>
+           <button type="button" id="close-modal-btn" class="btn-cancel">Annulla</button>
+         </form>
+         <div id="booking-feedback"></div>
+       </div>
+     </div>
+
     <script type="module" src="/src/dettaglio.ts"></script>
   </body>
 </html>

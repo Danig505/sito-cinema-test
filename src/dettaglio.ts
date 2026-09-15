@@ -29,14 +29,8 @@ const API_URL = 'https://its-cinema.vercel.app/api';
 const detailContainer = document.getElementById('movie-detail');
 const screeningsList = document.getElementById('screenings-list');
 
-// Elementi della Modale
-const modal = document.getElementById('booking-modal');
-const closeModalBtn = document.getElementById('close-modal');
-const bookingForm = document.getElementById('booking-form') as HTMLFormElement;
-const screeningIdInput = document.getElementById('screening-id') as HTMLInputElement;
-const bookingMessage = document.getElementById('booking-message');
-
 let currentFilmId: string | null = null;
+let currentScreeningId: string | null = null;
 
 async function initPage(): Promise<void> {
   const urlParams = new URLSearchParams(window.location.search);
@@ -115,7 +109,6 @@ function renderScreenings(screenings: Screening[]): void {
   }
 
   screeningsList.innerHTML = screenings.map(s => {
-    // Trasformiamo la data del server in un formato leggibile italiano
     const dateObj = new Date(s.starts_at);
     const dateStr = dateObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }).toUpperCase();
     const timeStr = dateObj.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
@@ -132,84 +125,73 @@ function renderScreenings(screenings: Screening[]): void {
           <span class="s-room">${s.hall.name}</span>
           <span class="s-seats">${s.available_seats} / ${s.hall.capacity} posti disponibili</span>
         </div>
-        <button class="btn-primary book-btn ${isFull ? 'btn-disabled' : ''}" ${isFull ? 'disabled' : ''} data-id="${s.id}">
+        <button class="btn-primary btn-book ${isFull ? 'btn-disabled' : ''}" ${isFull ? 'disabled' : ''} data-id="${s.id}">
           ${isFull ? 'ESAURITO' : 'DISPONIBILE'}
         </button>
       </div>
     `;
   }).join('');
 
-  // Aggiungiamo il click ad ogni pulsante "Disponibile"
-  document.querySelectorAll('.book-btn').forEach(btn => {
+  document.querySelectorAll('.btn-book').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const screeningId = (e.currentTarget as HTMLButtonElement).getAttribute('data-id');
-      if (screeningId) openModal(screeningId);
+      currentScreeningId = (e.currentTarget as HTMLButtonElement).getAttribute('data-id');
+      const modal = document.getElementById('booking-modal');
+      if (modal) modal.classList.remove('hidden');
     });
   });
 }
 
-// --- LOGICA MODALE PRENOTAZIONE ---
-
 function setupModal(): void {
-  if (closeModalBtn && modal) {
-    closeModalBtn.addEventListener('click', () => {
+  const modal = document.getElementById('booking-modal');
+  const closeBtn = document.getElementById('close-modal-btn');
+  const form = document.getElementById('booking-form') as HTMLFormElement;
+  const feedback = document.getElementById('booking-feedback');
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => {
       modal.classList.add('hidden');
+      if (feedback) feedback.innerHTML = '';
+      currentScreeningId = null;
     });
   }
 
-  if (bookingForm) {
-    bookingForm.addEventListener('submit', async (e) => {
+  if (form) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      await submitBooking();
+
+      if (!currentScreeningId) return;
+
+      const nome = (document.getElementById('nome') as HTMLInputElement).value;
+      const cognome = (document.getElementById('cognome') as HTMLInputElement).value;
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+
+      try {
+        const response = await fetch(`${API_URL}/screenings/${currentScreeningId}/bookings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            first_name: nome,
+            last_name: cognome,
+            email: email
+          })
+        });
+
+        if (!response.ok) throw new Error();
+
+        if (feedback) feedback.innerHTML = '<p class="feedback-success">Prenotazione completata con successo! 🍿</p>';
+        form.reset();
+
+        if (currentFilmId) await getScreenings(currentFilmId);
+
+        setTimeout(() => {
+          if (modal) modal.classList.add('hidden');
+          if (feedback) feedback.innerHTML = '';
+        }, 2000);
+
+      } catch (error) {
+        if (feedback) feedback.innerHTML = '<p class="feedback-error">Errore durante la prenotazione. Riprova.</p>';
+      }
     });
-  }
-}
-
-function openModal(screeningId: string): void {
-  if (!modal || !screeningIdInput) return;
-  screeningIdInput.value = screeningId;
-  if (bookingMessage) bookingMessage.innerHTML = '';
-  if (bookingForm) bookingForm.reset();
-  modal.classList.remove('hidden');
-}
-
-async function submitBooking(): Promise<void> {
-  const screeningId = screeningIdInput?.value;
-  const name = (document.getElementById('nome') as HTMLInputElement).value;
-  const surname = (document.getElementById('cognome') as HTMLInputElement).value;
-  const email = (document.getElementById('email') as HTMLInputElement).value;
-
-  try {
-    const response = await fetch(`${API_URL}/bookings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        film_id: currentFilmId ? parseInt(currentFilmId) : null,
-        screening_id: parseInt(screeningId),
-        name,
-        surname,
-        email
-      })
-    });
-
-    if (!response.ok) throw new Error();
-
-    if (bookingMessage) {
-      bookingMessage.innerHTML = '<p class="success-msg">Prenotazione confermata! 🍿</p>';
-    }
-
-    // Ricarica gli spettacoli per far scendere i posti disponibili
-    if (currentFilmId) await getScreenings(currentFilmId);
-
-    // Chiude la modale da sola dopo 2 secondi
-    setTimeout(() => {
-      if (modal) modal.classList.add('hidden');
-    }, 2000);
-
-  } catch (error) {
-    if (bookingMessage) {
-      bookingMessage.innerHTML = '<p class="error-msg">Ops! Errore di rete. Riprova.</p>';
-    }
   }
 }
 
